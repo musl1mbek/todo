@@ -1,0 +1,161 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta http-equiv="x-ua-compatible" content="ie=edge" />
+  <title>Material Design for Bootstrap</title>
+  <!-- MDB icon -->
+  <link rel="icon" href="{% static 'img/mdb-favicon.ico' %}" type="image/x-icon" />
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css" />
+  <!-- Google Fonts Roboto -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" />
+  <!-- MDB -->
+  <link rel="stylesheet" href="{% static 'css/bootstrap-to-do-list.min.css' %}" />
+</head>
+
+<body>
+  <!-- Start your project here-->
+  <style>
+    #list1 .form-control {
+      border-color: transparent;
+    }
+    #list1 .form-control:focus {
+      border-color: transparent;
+      box-shadow: none;
+    }
+    #list1 .select-input.form-control[readonly]:not([disabled]) {
+      background-color: #fbfbfb;
+    }
+  </style>
+  <section class="vh-100">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col">
+          <div class="card" id="list1" style="border-radius: .75rem; background-color: #eff1f2;">
+            <div class="card-body py-4 px-4 px-md-5">
+              <p class="h1 text-center mt-3 mb-4 pb-3 text-primary">
+                <i class="fas fa-check-square me-1"></i>
+                <u>My Todo-s</u>
+              </p>
+              <div class="pb-2">
+                <div class="card">
+                  <div class="card-body">
+                    <div>
+                      <form action="{% url 'home' %}" method="POST" class="d-flex flex-row align-items-center">
+                        {% csrf_token %}
+                        <input type="text" class="form-control form-control-lg" name='title' id="exampleFormControlInput1" required placeholder="Add new...">
+                        <input type="date" required name="date" class="fas fa-calendar-alt fa-lg me-3" value="{{today}}" style="width:290px">
+                        <div>
+                          <button type="submit" class="btn btn-primary">Add</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <hr class="my-4">
+              <div class="d-flex justify-content-end align-items-center mb-4 pt-2 pb-3">
+                <p class="small mb-0 me-2 text-muted">Filter</p>
+                  <form action="{% url 'path' %}" method="post">
+                    {% csrf_token %}
+                    <select class="select" name="status" onchange="this.form.submit();">
+                      <option value="" disabled selected>Tanlang</option>
+                      <option value="1">All</option>
+                      <option value="2">Completed</option>
+                      <option value="3">Active</option>
+                    </select>
+                  </form>
+              </div>
+              {% for task in tasks %}
+                <ul class="list-group list-group-horizontal rounded-0 bg-transparent">
+                  <li class="list-group-item d-flex align-items-center ps-0 pe-3 py-1 rounded-0 border-0 bg-transparent">
+                    <div class="form-check">
+                      <form action="{% url 'change' pk=task.id %}" method="POST">
+                        {% csrf_token %}
+                        <input
+                          class="form-check-input me-0"
+                          type="checkbox"
+                          value=""
+                          id="flexCheckChecked1"
+                          aria-label="..."
+                          onchange='this.form.submit();'
+                          {% if task.checked == True %}
+                          checked
+                          {% elif task.checked == False %}
+                          {% endif %}
+                        />
+                      </form>
+                    </div>
+                  </li>
+                  <li class="list-group-item px-3 py-1 d-flex align-items-center flex-grow-1 border-0 bg-transparent">
+                    <p class="lead fw-normal mb-0">{{task.title}}</p>
+                  </li>
+                  <li class="list-group-item ps-3 pe-0 py-1 rounded-0 border-0 bg-transparent">
+                    <div class="d-flex flex-row justify-content-end mb-1">
+                      <button type="button" style="border:none;" data-toggle="modal" data-target="#exampleModalLong{{ task.id }}">
+                        <a href="#!" class="text-info" data-mdb-toggle="tooltip" title="Edit todo"><i class="fas fa-pencil-alt me-3"></i></a>
+                      </button>
+                      <form action="{% url 'delete' pk=task.id %}" method="POST">
+                        {% csrf_token %}
+                        <button style="border:none;"><a href="#!" class="text-danger" onchange="this.form.submit();" data-mdb-toggle="tooltip" title="Delete todo"><i class="fas fa-trash-alt"></i></a></button>
+                      </form>
+                    </div>
+                    <div class="text-end text-muted">
+                      <a href="#!" class="text-muted" data-mdb-toggle="tooltip" title="Created date">
+                        <p class="small mb-0"><i class="fas fa-info-circle me-2"></i>{{task.date|date:'Y-m-d'}}</p></a>
+                    </div>
+                  </li>
+                </ul>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- End your project here-->
+
+  <!-- MDB -->
+  <script type="text/javascript" src="{% static 'js/mdb.min.js' %}"></script>
+  <!-- Custom scripts -->
+  <script type="text/javascript"></script>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+</body>
+<!-- Button trigger modal -->
+
+<!-- Modal -->
+{% for task in tasks %}
+  <div class="modal fade" id="exampleModalLong{{task.id}}" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLongTitle">O'zgartirish</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <form action="{% url 'change-task' %}" method="post">
+        {% csrf_token %}
+        <div class="modal-body">
+            <input value="{{task.title}}" name="new-title" type="text" class="form-control">
+
+            <input type="date" name="new-date" value="{{task.date|date:'Y'}}-{{task.date|date:'m'}}-{{task.date|date:'d'}}" class="form-control mt-2">
+            <input type="hidden" name="id" value="{{task.id}}">
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Bekor qilish</button>
+          <button type="submit" class="btn btn-primary">Saqlash</button>
+        </div>
+        </form>
+      </div>
+    </div>
+  </div>
+{% endfor %}
+</html>
